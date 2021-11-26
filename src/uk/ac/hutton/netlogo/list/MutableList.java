@@ -968,6 +968,186 @@ public class MutableList implements List<Object>, Cloneable {
 			last.prev = this;
 		}
 	}
+	
+	public Object first() {
+		try {
+			return tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("first() called on empty MutableList");
+		}
+	}
+	
+	public void first(Object obj) {
+		try {
+			tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("first() called on empty MutableList");
+		}
+	}
+	
+	public Object second() {
+		try {
+			return tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("second() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void second(Object obj) {
+		try {
+			tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("second() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object third() {
+		try {
+			return tail.tail.tail.head;	
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("third() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void third(Object obj) {
+		try {
+			tail.tail.tail.head = obj;	
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("third() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object fourth() {
+		try {
+			return tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("fourth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void fourth(Object obj) {
+		try {
+			tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("fourth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object fifth() {
+		try {
+			return tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("fifth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void fifth(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("fifth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object sixth() {
+		try {
+			return tail.tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("sixth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void sixth(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("sixth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object seventh() {
+		try {
+			return tail.tail.tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("seventh() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void seventh(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("seventh() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object eighth() {
+		try {
+			return tail.tail.tail.tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("eighth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void eighth(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("eighth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object ninth() {
+		try {
+			return tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("ninth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public void ninth(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("ninth() called on MutableList of insufficient size");
+		}
+	}
+	
+	public Object tenth() {
+		try {
+			return tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("tenth() called on MutableList of insufficient size");
+		}
+	}
+
+	public void tenth(Object obj) {
+		try {
+			tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
+		}
+		catch(NullPointerException e) {
+			throw new NoSuchElementException("tenth() called on MutableList of insufficient size");
+		}
+	}
 
 	public boolean check(boolean msg, String msgPrefix) {
 		if (!isFront()) {

@@ -12,18 +12,14 @@ import org.nlogo.api.PrimitiveManager;
  *
  */
 public class MutableListExtension extends DefaultClassManager {
-
-	/**
-	 * 
-	 */
-	public MutableListExtension() {
-		// TODO Auto-generated constructor stub
-	}
+	public static final String EXTENSION_NAME = "ls";
 
 	@Override
 	public void load(PrimitiveManager primManager) throws ExtensionException {
-		// TODO Auto-generated method stub
-
+		primManager.addPrimitive("cursor", new ListReporter(ListReporter.Name.CURSOR));
+		primManager.addPrimitive("foreach", new ListCommand(ListCommand.Name.FOREACH));
+		primManager.addPrimitive("make", new ListReporter(ListReporter.Name.MAKE));
+		primManager.addPrimitive("reverse", new ListCommand(ListCommand.Name.REVERSE));
 	}
 
 }
