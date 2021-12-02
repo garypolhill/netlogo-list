@@ -968,174 +968,155 @@ public class MutableList implements List<Object>, Cloneable {
 			last.prev = this;
 		}
 	}
-	
+
 	public Object first() {
 		try {
 			return tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("first() called on empty MutableList");
 		}
 	}
-	
+
 	public void first(Object obj) {
 		try {
 			tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("first() called on empty MutableList");
 		}
 	}
-	
+
 	public Object second() {
 		try {
 			return tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("second() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void second(Object obj) {
 		try {
 			tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("second() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object third() {
 		try {
-			return tail.tail.tail.head;	
-		}
-		catch(NullPointerException e) {
+			return tail.tail.tail.head;
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("third() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void third(Object obj) {
 		try {
-			tail.tail.tail.head = obj;	
-		}
-		catch(NullPointerException e) {
+			tail.tail.tail.head = obj;
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("third() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object fourth() {
 		try {
 			return tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("fourth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void fourth(Object obj) {
 		try {
 			tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("fourth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object fifth() {
 		try {
 			return tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("fifth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void fifth(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("fifth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object sixth() {
 		try {
 			return tail.tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("sixth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void sixth(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("sixth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object seventh() {
 		try {
 			return tail.tail.tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("seventh() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void seventh(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("seventh() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object eighth() {
 		try {
 			return tail.tail.tail.tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("eighth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void eighth(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("eighth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object ninth() {
 		try {
 			return tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("ninth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public void ninth(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("ninth() called on MutableList of insufficient size");
 		}
 	}
-	
+
 	public Object tenth() {
 		try {
 			return tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("tenth() called on MutableList of insufficient size");
 		}
 	}
@@ -1143,12 +1124,20 @@ public class MutableList implements List<Object>, Cloneable {
 	public void tenth(Object obj) {
 		try {
 			tail.tail.tail.tail.tail.tail.tail.tail.tail.tail.head = obj;
-		}
-		catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw new NoSuchElementException("tenth() called on MutableList of insufficient size");
 		}
 	}
 
+	/**
+	 * Sanity checker for the list
+	 * 
+	 * @param msg       set to <code>true</code> if you want a message printed to
+	 *                  stderr if there's a problem
+	 * @param msgPrefix a prefix you want printed in front of any error message
+	 * @return <code>true</code> if, as far as the checks performed here are
+	 *         concerned, the structure of the list is sound
+	 */
 	public boolean check(boolean msg, String msgPrefix) {
 		if (!isFront()) {
 			if (msg) {
@@ -1443,6 +1432,44 @@ public class MutableList implements List<Object>, Cloneable {
 
 		}
 
+	}
+
+	public void cat(MutableList other) {
+		MutableList end = last();
+		end.tail = other.tail;
+		if (other.tail != null) {
+			other.tail.prev = end;
+		}
+		other.tail = null;
+	}
+
+	public boolean containsAny(Collection<?> objs) {
+		Set<Object> cc = makeSet(objs);
+
+		for (MutableList i = tail; i != null; i = i.tail) {
+			if (cc.contains(i.head)) {
+				cc.clear();
+				return true;
+			}
+		}
+		cc.clear();
+		return false;
+	}
+
+	public boolean containsDeeply(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		for (MutableList i = tail; i != null; i = i.tail) {
+			if (i.head instanceof MutableList) {
+				if (((MutableList) i.head).containsDeeply(obj)) {
+					return true;
+				}
+			} else if (i.head.equals(obj)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private class DepthFirstMutableListIterator implements Iterator<Object> {
