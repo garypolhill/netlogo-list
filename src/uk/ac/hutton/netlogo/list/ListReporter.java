@@ -34,9 +34,9 @@ import org.nlogo.core.SyntaxJ;
  */
 public class ListReporter implements Reporter {
 	public enum Name {
-		AS_LIST, AS_LIST_DEEPLY, COUNTS, CURSOR, DEEP_MEMBER, FROM_AGENTSET, FROM_LIST, HISTOGRAM, INTERSECTS, IS_EMPTY,
-		IS_LIST, LENGTH, MAKE, MAP, MAX, MEAN, MEDIAN, MEMBER, MEMBER_ANY, MIN, MODES, POP, QUARTILES, RANGE, REDUCE,
-		SHIFT, SUM, FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH
+		AS_LIST, AS_LIST_DEEPLY, COUNTS, COPY, CURSOR, DEEP_MEMBER, FROM_AGENTSET, FROM_LIST, HISTOGRAM, INTERSECTS,
+		IS_EMPTY, IS_LIST, LENGTH, MAKE, MAP, MAX, MEAN, MEDIAN, MEMBER, MEMBER_ANY, MIN, MODES, POP, QUARTILES, RANGE,
+		REDUCE, SHIFT, SUM, FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH
 	};
 
 	private final Name cmd;
@@ -60,6 +60,8 @@ public class ListReporter implements Reporter {
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.ListType());
 		case COUNTS:
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.ListType());
+		case COPY:
+			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.WildcardType());
 		case CURSOR:
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.WildcardType());
 		case DEEP_MEMBER:
@@ -192,6 +194,8 @@ public class ListReporter implements Reporter {
 				return list.asLogoList();
 			case AS_LIST_DEEPLY:
 				return list.asLogoListDeeply();
+			case COPY:
+				return list.copy();
 			case COUNTS:
 				return counts(list);
 			case CURSOR:

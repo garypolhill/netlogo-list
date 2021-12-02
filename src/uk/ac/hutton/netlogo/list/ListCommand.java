@@ -4,10 +4,12 @@
 package uk.ac.hutton.netlogo.list;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.nlogo.api.AgentSet;
 import org.nlogo.api.AnonymousCommand;
@@ -30,7 +32,7 @@ import org.nlogo.core.SyntaxJ;
 public class ListCommand implements Command {
 	public enum Name {
 		CAT, CLEAR, FILTER, FOREACH, FOREACH_DEPTH_FIRST, KEEP, PUSH, PUSH_ALL, REMOVE, REMOVE_DUPLICATES, REMOVE_ONCE,
-		REVERSE, SORT, UNSHIFT, UNSHIFT_ALL, FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH
+		REVERSE, SHUFFLE, SORT, UNSHIFT, UNSHIFT_ALL, FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHTH, NINTH, TENTH
 	};
 
 	private final Name cmd;
@@ -166,6 +168,8 @@ public class ListCommand implements Command {
 			case REVERSE:
 				list.reverse();
 				break;
+			case SHUFFLE:
+				list.sort(new ShufflingComparator(list, context));
 			case SORT:
 				try {
 					list.sort(new ObjectComparator(args[1].getReporter(), context));
@@ -323,5 +327,41 @@ public class ListCommand implements Command {
 			}
 		}
 
+	}
+	
+	/**
+	 * Comparator interface that enables sorting a list in random order. This isn't particularly
+	 * great because if there are duplicate entries in the list, we don't know which one the
+	 * comparator is expecting. This may need a different approach.
+	 * 
+	 * @author gary
+	 */
+	protected class ShufflingComparator implements Comparator<Object> {
+		Map<Object, List<Double>> randomOrder;
+		
+		protected ShufflingComparator(NetLogoMutableList list, Context context) {
+			randomOrder = new HashMap<Object, List<Double>>();
+			for(Object item: list) {
+				if (!randomOrder.containsKey(item)) {
+					randomOrder.put(item, new LinkedList<Double>());
+				}
+				randomOrder.get(item).add(context.getRNG().nextDouble());
+			}
+		}
+
+		@Override
+		public int compare(Object o1, Object o2) {
+			if (!randomOrder.containsKey(o1) || !randomOrder.containsKey(o2)) {
+				throw new IllegalStateException("BUG! I'm being asked to compare two objects I've not heard of before");
+			}
+			List<Double> l1 = randomOrder.get(o1);
+			double d1 = l1.remove(0);
+			l1.add(d1);
+			List<Double> l2 = randomOrder.get(o2);
+			double d2 = l2.remove(0);
+			l2.add(d2);
+			return (d1 < d2 ? -1 : (d1 > d2 ? 1 : 0));
+		}
+		
 	}
 }

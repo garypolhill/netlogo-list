@@ -22,6 +22,7 @@ public class MutableListExtension extends DefaultClassManager {
 		primManager.addPrimitive("as-list-deeply", new ListReporter(ListReporter.Name.AS_LIST_DEEPLY));
 		primManager.addPrimitive("cat", new ListCommand(ListCommand.Name.CAT));
 		primManager.addPrimitive("clear", new ListCommand(ListCommand.Name.CLEAR));
+		primManager.addPrimitive("copy", new ListReporter(ListReporter.Name.COPY));
 		primManager.addPrimitive("counts", new ListReporter(ListReporter.Name.COUNTS));
 		primManager.addPrimitive("cursor", new ListReporter(ListReporter.Name.CURSOR));
 		primManager.addPrimitive("deep-member?", new ListReporter(ListReporter.Name.DEEP_MEMBER));
@@ -40,7 +41,7 @@ public class MutableListExtension extends DefaultClassManager {
 		primManager.addPrimitive("histogram", new ListReporter(ListReporter.Name.HISTOGRAM));
 		primManager.addPrimitive("insert", new IndexCommand(IndexCommand.Name.INSERT));
 		primManager.addPrimitive("intersects?", new ListReporter(ListReporter.Name.INTERSECTS));
-		primManager.addPrimitive("is-index?", new IndexReporter(IndexReporter.Name.IS_INDEX));
+		primManager.addPrimitive("is-cursor?", new IndexReporter(IndexReporter.Name.IS_INDEX));
 		primManager.addPrimitive("is-list?", new ListReporter(ListReporter.Name.IS_LIST));
 		primManager.addPrimitive("keep", new ListCommand(ListCommand.Name.KEEP));
 		primManager.addPrimitive("left", new IndexReporter(IndexReporter.Name.LEFT));
@@ -65,6 +66,7 @@ public class MutableListExtension extends DefaultClassManager {
 		primManager.addPrimitive("remove-once", new ListCommand(ListCommand.Name.REMOVE_ONCE));
 		primManager.addPrimitive("reverse", new ListCommand(ListCommand.Name.REVERSE));
 		primManager.addPrimitive("right", new IndexReporter(IndexReporter.Name.RIGHT));
+		primManager.addPrimitive("shuffle", new ListCommand(ListCommand.Name.SHUFFLE));
 		primManager.addPrimitive("sort", new ListCommand(ListCommand.Name.SORT));
 		primManager.addPrimitive("sum", new ListReporter(ListReporter.Name.SUM));
 

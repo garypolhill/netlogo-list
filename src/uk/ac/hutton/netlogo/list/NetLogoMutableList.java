@@ -569,6 +569,18 @@ public class NetLogoMutableList implements ExtensionObject, Iterable<Object> {
 		list.clear();
 		size = 0;
 	}
+	
+	
+	/**
+	 * @param other
+	 * @return a copy of the other list
+	 */
+	public NetLogoMutableList copy() {
+		NetLogoMutableList result = new NetLogoMutableList();
+		result.size = size;
+		result.list = list.clone();
+		return result;
+	}
 
 	/**
 	 * Convenience function converting a NetLogo API argument expected to be a
