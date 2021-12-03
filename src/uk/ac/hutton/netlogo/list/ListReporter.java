@@ -89,7 +89,7 @@ public class ListReporter implements Reporter {
 		case MAP:
 			return SyntaxJ.reporterSyntax(
 					new int[] { Syntax.ReporterType(), Syntax.WildcardType() | Syntax.RepeatableType() },
-					Syntax.WildcardType());
+					Syntax.WildcardType(), 2);
 		case MAX:
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.NumberType());
 		case MEAN:
@@ -101,7 +101,7 @@ public class ListReporter implements Reporter {
 		case MEMBER_ANY:
 			return SyntaxJ.reporterSyntax(
 					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() },
-					Syntax.BooleanType());
+					Syntax.BooleanType(), 2);
 		case MIN:
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.NumberType());
 		case MODES:
@@ -112,7 +112,7 @@ public class ListReporter implements Reporter {
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.WildcardType() }, Syntax.ListType());
 		case RANGE:
 			return SyntaxJ.reporterSyntax(
-					new int[] { Syntax.NumberType(), Syntax.NumberType(), Syntax.NumberType() | Syntax.OptionalType() },
+					new int[] { Syntax.NumberType(), Syntax.NumberType(), Syntax.NumberType() },
 					Syntax.WildcardType());
 		case REDUCE:
 			return SyntaxJ.reporterSyntax(new int[] { Syntax.ReporterType(), Syntax.WildcardType() },
@@ -162,7 +162,7 @@ public class ListReporter implements Reporter {
 		} else if (cmd == Name.RANGE) {
 			double start = args[0].getDoubleValue();
 			double stop = args[1].getDoubleValue();
-			double inc = args.length < 3 ? (stop < start ? -1 : 1) : args[2].getDoubleValue();
+			double inc = args[2].getDoubleValue();
 			if (inc == 0.0) {
 				throw new ExtensionException("range command called with zero increment");
 			} else if ((inc > 0.0 && start > stop) || (inc < 0.0 && start < stop)) {
@@ -558,10 +558,10 @@ public class ListReporter implements Reporter {
 	 * @throws ExtensionException
 	 */
 	private NetLogoMutableList map(Argument args[], Context context) throws ExtensionException {
-		AnonymousReporter cmd = args[1].getReporter();
-		NetLogoMutableList[] listArgs = new NetLogoMutableList[args.length - 2];
-		for (int i = 2; i < args.length; i++) {
-			listArgs[i - 2] = NetLogoMutableList.asNetLogoMutableList(args[i]);
+		AnonymousReporter cmd = args[0].getReporter();
+		NetLogoMutableList[] listArgs = new NetLogoMutableList[args.length - 1];
+		for (int i = 1; i < args.length; i++) {
+			listArgs[i - 1] = NetLogoMutableList.asNetLogoMutableList(args[i]);
 		}
 		@SuppressWarnings("unchecked")
 		Iterator<Object>[] ixes = new Iterator[listArgs.length];

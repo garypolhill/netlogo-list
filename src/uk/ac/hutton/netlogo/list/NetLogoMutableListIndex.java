@@ -19,7 +19,7 @@ import org.nlogo.core.ExtensionObject;
 public class NetLogoMutableListIndex implements ExtensionObject {
 	private ListIterator<Object> ix;
 	private final NetLogoMutableList list;
-	public static final String DATA_TYPE_NAME = "index";
+	public static final String DATA_TYPE_NAME = "cursor";
 	private static long next_id = 0L;
 	private final long id;
 

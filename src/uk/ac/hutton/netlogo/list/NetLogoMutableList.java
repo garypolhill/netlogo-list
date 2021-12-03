@@ -614,8 +614,13 @@ public class NetLogoMutableList implements ExtensionObject, Iterable<Object> {
 		if (exporting && reference) {
 			return Long.toString(id);
 		} else {
-			return (exporting ? (id + ": ") : "") + list.asPrintableString("[!", " ", "!]");
+			return (exporting ? (id + ": ") : "") + list.asPrintableString("[! (", ") (", ") !]");
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return list.asPrintableString("[! (", ") (", ") !]");
 	}
 
 	/**

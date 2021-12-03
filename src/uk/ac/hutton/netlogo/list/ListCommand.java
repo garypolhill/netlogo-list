@@ -57,26 +57,26 @@ public class ListCommand implements Command {
 		switch (cmd) {
 		case CAT:
 			return SyntaxJ.commandSyntax(
-					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() });
+					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
 		case CLEAR:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType() });
 		case FILTER:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.BooleanBlockType(), Syntax.WildcardType() });
 		case FOREACH:
-			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.CommandBlockType() });
+			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.CommandType() });
 		case FOREACH_DEPTH_FIRST:
-			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.CommandBlockType() });
+			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.CommandType() });
 		case KEEP:
 			return SyntaxJ.commandSyntax(
-					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() });
+					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
 		case PUSH:
 			return SyntaxJ.commandSyntax(
-					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() });
+					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
 		case PUSH_ALL:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.WildcardType() });
 		case REMOVE:
 			return SyntaxJ.commandSyntax(
-					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() });
+					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
 		case REMOVE_DUPLICATES:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType() });
 		case REMOVE_ONCE:
@@ -87,7 +87,7 @@ public class ListCommand implements Command {
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.NumberBlockType() });
 		case UNSHIFT:
 			return SyntaxJ.commandSyntax(
-					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() });
+					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
 		case UNSHIFT_ALL:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.WildcardType() });
 		case FIRST:

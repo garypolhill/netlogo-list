@@ -891,6 +891,9 @@ public class MutableList implements List<Object>, Cloneable {
 			if (i.head instanceof MutableList) {
 				((MutableList) (i.head)).clear();
 			}
+			else if (head instanceof NetLogoMutableList) {
+				((NetLogoMutableList) (i.head)).clear();
+			}
 			i.head = null;
 		}
 		head = null; // Paranoid; should be null already if this is the front
@@ -905,6 +908,9 @@ public class MutableList implements List<Object>, Cloneable {
 	private void shallowClear() {
 		if (head instanceof MutableList) {
 			((MutableList) (head)).clear();
+		}
+		else if (head instanceof NetLogoMutableList) {
+			((NetLogoMutableList) (head)).clear();
 		}
 		head = null;
 		tail = null;
@@ -923,6 +929,9 @@ public class MutableList implements List<Object>, Cloneable {
 			Object newObj = i.head;
 			if (i.head instanceof MutableList) {
 				newObj = ((MutableList) (i.head)).clone();
+			}
+			else if (i.head instanceof NetLogoMutableList) {
+				newObj = ((NetLogoMutableList) (i.head)).copy();
 			}
 			next = new MutableList(newObj, next);
 		}
@@ -1230,210 +1239,10 @@ public class MutableList implements List<Object>, Cloneable {
 	}
 
 	/**
-	 * Iterator class for MutableList conforming to ListIterator. Some rather clunky
-	 * machinery here.
+	 * Add other to the end of this list, and empty other
 	 * 
-	 * @author Gary Polhill
-	 * @version 1.0, 10 November 2021
+	 * @param other
 	 */
-	private class MutableListIterator implements ListIterator<Object> {
-		private MutableList i;
-		private int ix;
-		private boolean removed;
-		private boolean indexed;
-		private int added;
-
-		/**
-		 * Default constructor to start the iterator at the beginning of a list
-		 * 
-		 * @param i the 'front' of a MutableList
-		 */
-		private MutableListIterator(MutableList i) {
-			this(i, -1);
-		}
-
-		/**
-		 * Constructor to start the iterator at any point in the list. If
-		 * <code>ix</code> is not <code>-1</code>, then <code>i</code> must be the
-		 * MutableList at the location <i>before</i> <code>i</code>.
-		 * 
-		 * @param i  the MutableList at which the iterator will start
-		 * @param ix the corresponding index
-		 */
-		private MutableListIterator(MutableList i, int ix) {
-			if (i == null) {
-				throw new IllegalArgumentException("Cannot iterate null MutableList");
-			}
-			this.i = i;
-			this.ix = ix;
-			if (ix == -1 && !i.isFront()) {
-				throw new RuntimeException("BUG! MutableListIterator at -1 called with non-front element");
-			}
-			removed = false;
-			indexed = (ix >= 0);
-			added = 0;
-		}
-
-		/**
-		 * There are two ways for the ListIterator to be called. If <code>indexed</code>
-		 * is <code>true</code> then it was called at a specific index rather than the
-		 * beginning of the list. In that case, <code>i</code> is at the location before
-		 * <code>ix</code>. There is then a <code>next()</code> if i.tail.tail != null.
-		 */
-		@Override
-		public boolean hasNext() {
-			if (indexed) {
-				return (i.tail != null && i.tail.tail != null);
-			}
-			return (i.tail != null);
-		}
-
-		@Override
-		public Object next() {
-			if (indexed) {
-				i = i.tail;
-				indexed = false;
-				return i.head;
-			} else if (i.tail == null) {
-				throw new NoSuchElementException("Reached end of MutableList (at [" + ix + "] = " + i.head + ")");
-			} else {
-				MutableList j = i;
-				i = i.tail;
-				if (removed) {
-					j.shallowClear();
-				}
-				ix++;
-				removed = false;
-				added = 0;
-				return i.head;
-			}
-		}
-
-		@Override
-		public boolean hasPrevious() {
-			if (added > 0 || indexed) {
-				return true;
-			}
-			return (i.prev != null && i.prev.head != null);
-		}
-
-		@Override
-		public Object previous() {
-			if (indexed) {
-				indexed = false;
-				ix--;
-				return i.head;
-			}
-			if (added > 0) {
-				// should not be necessary to set removed = false
-				added = 0;
-				return i.head;
-			}
-			if (i.prev == null || i.prev.head == null) {
-				throw new NoSuchElementException("Reached beginning of MutableList (at [" + ix + "] = " + i.head + ")");
-			} else {
-				MutableList j = i;
-				i = i.prev;
-				if (removed) {
-					j.shallowClear();
-				}
-				ix--;
-				removed = false;
-				added = 0;
-				return i.head;
-			}
-		}
-
-		@Override
-		public int nextIndex() {
-			return indexed ? ix : ix + 1;
-		}
-
-		@Override
-		public int previousIndex() {
-			if (added > 0 || ix == -1) {
-				return ix;
-			}
-			return ix - 1;
-		}
-
-		@Override
-		public void remove() {
-			if (removed) {
-				throw new IllegalStateException("Cannot remove() twice between next() / previous() calls");
-			}
-			if (added != 0) {
-				throw new IllegalStateException("Cannot remove() after add() between next() / previous() calls");
-			}
-			if (i.head == null) {
-				throw new IllegalStateException("Cannot remove() from empty list");
-			}
-			if (ix == -1 || indexed) {
-				throw new IllegalStateException("Cannot remove() before calling next() or previous()");
-			}
-			if (i.prev == null) {
-				throw new RuntimeException("BUG! (Item to remove has no 'prev')");
-			}
-			i.prev.tail = i.tail;
-			if (i.tail != null) {
-				i.tail.prev = i.prev;
-			}
-			removed = true;
-		}
-
-		@Override
-		public void set(Object o) {
-			if (o == null) {
-				throw new IllegalArgumentException("Cannot set()  MutableList entry to null");
-			}
-			if (ix == -1 || indexed) {
-				throw new IllegalStateException("Cannot set() before calling next() or previous()");
-			}
-			if (removed || added != 0) {
-				throw new IllegalStateException(
-						"Cannot set() MutableList entry when you've already add()ed or remove()d");
-			}
-			i.head = o;
-		}
-
-		@Override
-		public void add(Object o) {
-			if (o == null) {
-				throw new IllegalArgumentException("Cannot add null to MutableList");
-			} else if ((i.isFront() && i.tail == null) || (indexed && i.tail == null)) {
-				// Adding items to an empty list or to the end of a list puts the 'cursor' at an
-				// imaginary endpoint after the last item; so future adds will be _after_ this
-				// add rather than before it
-				i.tail = new MutableList(o, i);
-				i = i.tail;
-				added = 1;
-			} else {
-				if (i.isFront() || indexed) {
-					i = i.tail;
-					if (!indexed) {
-						ix++;
-					} else {
-						indexed = false;
-					}
-				}
-				if (added <= 0) {
-					MutableList j = new MutableList(o, i.prev, i);
-					i.prev = j;
-					added = -1;
-				} else {
-					if (i.tail != null) {
-						throw new RuntimeException("BUG! (Started adding to empty list, but have a non-null tail)");
-					}
-					i.tail = new MutableList(o, i);
-					i = i.tail;
-				}
-			}
-			ix++;
-
-		}
-
-	}
-
 	public void cat(MutableList other) {
 		MutableList end = last();
 		end.tail = other.tail;
@@ -1443,6 +1252,13 @@ public class MutableList implements List<Object>, Cloneable {
 		other.tail = null;
 	}
 
+	/**
+	 * Disjunctive multiple list membership test that avoids inefficient
+	 * <code>contains(x) || contains(y)</code>
+	 * 
+	 * @param objs
+	 * @return <code>true</code> if at least one of the objs is in the list
+	 */
 	public boolean containsAny(Collection<?> objs) {
 		Set<Object> cc = makeSet(objs);
 
@@ -1456,6 +1272,13 @@ public class MutableList implements List<Object>, Cloneable {
 		return false;
 	}
 
+	/**
+	 * Recursive list membership test
+	 * 
+	 * @param obj
+	 * @return <code>true</code> if at least one of the objs is in the list or any
+	 *         list members
+	 */
 	public boolean containsDeeply(Object obj) {
 		if (obj == null) {
 			return false;
@@ -1465,11 +1288,181 @@ public class MutableList implements List<Object>, Cloneable {
 				if (((MutableList) i.head).containsDeeply(obj)) {
 					return true;
 				}
+			} else if (i.head instanceof NetLogoMutableList) {
+				if (((NetLogoMutableList) i.head).deepMember(obj)) {
+					return true;
+				}
 			} else if (i.head.equals(obj)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Iterator class for MutableList conforming to ListIterator. Some rather clunky
+	 * machinery here.
+	 * 
+	 * @author Gary Polhill
+	 * @version 1.0, 10 November 2021
+	 */
+	private class MutableListIterator implements ListIterator<Object> {
+		private MutableList i;
+		private double dx;
+		private boolean removed;
+		private int dir;
+		private boolean added;
+
+		/**
+		 * Default constructor to start the iterator at the beginning of a list
+		 * 
+		 * @param i the 'front' of a MutableList
+		 */
+		private MutableListIterator(MutableList i) {
+			this(i, 0);
+		}
+
+		/**
+		 * Constructor to start the iterator at any point in the list. <code>i</code>
+		 * must be the MutableList at the location <i>before</i> <code>ix</code>.
+		 * 
+		 * @param i  the MutableList at which the iterator will start
+		 * @param ix the corresponding index
+		 */
+		private MutableListIterator(MutableList i, int ix) {
+			if (i == null) {
+				throw new IllegalArgumentException("Cannot iterate null MutableList");
+			}
+			if (ix < 0) {
+				throw new NoSuchElementException("Cannot start from negative index");
+			}
+			this.i = i;
+			this.dx = (double) ix - 0.5;
+			removed = false;
+			dir = 0;
+			added = false;
+		}
+
+		/**
+		 * There are two ways for the ListIterator to be called. If <code>indexed</code>
+		 * is <code>true</code> then it was called at a specific index rather than the
+		 * beginning of the list. In that case, <code>i</code> is at the location before
+		 * <code>ix</code>. There is then a <code>next()</code> if i.tail.tail != null.
+		 */
+		@Override
+		public boolean hasNext() {
+			return (i.tail != null);
+		}
+
+		private int cx() {
+			return (int) Math.ceil(dx);
+		}
+
+		private int fx() {
+			return (int) Math.floor(dx);
+		}
+
+		@Override
+		public Object next() {
+			if (i.tail == null) {
+				throw new NoSuchElementException("Reached end of MutableList (at [" + fx() + "])");
+			} else {
+				i = i.tail;
+				dx += 1.0;
+				removed = false;
+				added = false;
+				dir = 1;
+				return i.head;
+			}
+		}
+
+		@Override
+		public boolean hasPrevious() {
+			return (i.head != null);
+		}
+
+		@Override
+		public Object previous() {
+			if (i.head == null) {
+				throw new NoSuchElementException(
+						"Reached beginning of MutableList (at [" + cx() + "])");
+			} else {
+				MutableList j = i;
+				i = i.prev;
+				dx -= 1.0;
+				removed = false;
+				added = false;
+				dir = -1;
+				return j.head;
+			}
+		}
+
+		@Override
+		public int nextIndex() {
+			return cx();
+		}
+
+		@Override
+		public int previousIndex() {
+			return fx();
+		}
+
+		@Override
+		public void remove() {
+			if (dir == 0) {
+				throw new IllegalStateException("Cannot remove() until you've called next() or previous()");
+			}
+			if (removed) {
+				throw new IllegalStateException("Cannot remove() twice between next() / previous() calls");
+			}
+			if (added) {
+				throw new IllegalStateException("Cannot remove() after add() between next() / previous() calls");
+			}
+			if (i.isFront() && i.tail == null) {
+				throw new IllegalStateException("Cannot remove() from empty list");
+			}
+			if (i.prev == null) {
+				throw new RuntimeException("BUG! (Item to remove has no 'prev')");
+			}
+
+			MutableList delete_me = (dir < 0) ? i.tail : i;
+			i = delete_me.prev;
+			i.tail = delete_me.tail;
+			if (i.tail != null) {
+				i.tail.prev = i;
+			}
+			delete_me.shallowClear();
+			removed = true;
+			dx -= (dir > 0) ? 1.0 : 0.0;
+		}
+
+		@Override
+		public void set(Object o) {
+			if (o == null) {
+				throw new IllegalArgumentException("Cannot set() MutableList entry to null");
+			}
+			if (dir == 0) {
+				throw new IllegalStateException("Cannot set() before calling next() or previous()");
+			}
+			if (removed || added) {
+				throw new IllegalStateException(
+						"Cannot set() MutableList entry when you've already add()ed or remove()d");
+			}
+			i.head = o;
+		}
+
+		@Override
+		public void add(Object o) {
+			if (o == null) {
+				throw new IllegalArgumentException("Cannot add null to MutableList");
+			}
+
+			new MutableList(o, i, i.tail);
+			dx += 1.0;
+			i = i.tail;
+			added = true;
+		}
+
 	}
 
 	private class DepthFirstMutableListIterator implements Iterator<Object> {

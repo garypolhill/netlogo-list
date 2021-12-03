@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
@@ -329,43 +330,95 @@ public class TestMutableList {
 	@Test
 	public void testListIterator() {
 		String[] array = new String[] { "a", "b", "c", "d", "e" };
+		List<String> jl = new LinkedList<String>();
+		for(String s: array) {
+			jl.add(s);
+		}
 		MutableList list = new MutableList(Arrays.asList(array));
 		ListIterator<Object> ix = list.listIterator();
+		ListIterator<String> jx = jl.listIterator();
 		ix.add("z");
+		jx.add("z");
 		assertEquals(array.length + 1, list.size());
+		assertEquals(jx.previousIndex(), ix.previousIndex());
+		assertEquals(jx.nextIndex(), ix.nextIndex());
 		assertEquals("z", ix.previous());
+		assertEquals("z", jx.previous());
+		assertEquals(jx.previousIndex(), ix.previousIndex());
+		assertEquals(jx.nextIndex(), ix.nextIndex());
+		assertEquals(jx.next(), ix.next());
 		int j = 0;
 		while (ix.hasNext()) {
-			assertEquals(array[j], ix.next());
+			assertEquals(jx.hasNext(), ix.hasNext());
+			assertEquals(jx.hasPrevious(), ix.hasPrevious());
+			Object ixn = ix.next();
+			assertEquals(jx.next(), ixn);
+			assertEquals(jx.nextIndex(), ix.nextIndex());
+			assertEquals(jx.previousIndex(), ix.previousIndex());
+			assertEquals(array[j], ixn);
 			j++;
 		}
+		assertEquals(jx.hasNext(), ix.hasNext());
+		assertEquals(jx.hasPrevious(), ix.hasPrevious());
 		ix.add("z");
+		jx.add("z");
+		assertEquals(jx.nextIndex(), ix.nextIndex());
+		assertEquals(jx.previousIndex(), ix.previousIndex());
 		assertEquals(array.length + 2, list.size());
-		assertEquals("zabcdze", list.asPrintableString("", "", ""));
+		assertEquals("zabcdez", list.asPrintableString("", "", ""));
 		try {
 			ix.next();
 		} catch (Throwable e) {
 			assertEquals(NoSuchElementException.class, e.getClass());
 		}
-		assertEquals("z", ix.previous());
-		ix.remove();
-
-		assertEquals(array.length + 1, list.size());
-		while (ix.hasPrevious() && j > 0) {
-			j--;
-			assertEquals(array[j], j == (array.length - 1) ? ix.next() : ix.previous());
+		try {
+			jx.next();
+		} catch (Throwable e) {
+			assertEquals(NoSuchElementException.class, e.getClass());
 		}
 		assertEquals("z", ix.previous());
+		assertEquals("z", jx.previous());
+		ix.remove();
+		jx.remove();
+		assertEquals(jx.nextIndex(), ix.nextIndex());
+		assertEquals(jx.previousIndex(), ix.previousIndex());
+		assertEquals(jx.hasNext(), ix.hasNext());
+		assertEquals(jx.hasPrevious(), ix.hasPrevious());
+
+		assertEquals(array.length + 1, list.size());
+		while (ix.hasPrevious() && jx.hasPrevious()) {
+			assertEquals(jx.previous(), ix.previous());
+			assertEquals(jx.nextIndex(), ix.nextIndex());
+			assertEquals(jx.previousIndex(), ix.previousIndex());
+			assertEquals(jx.hasNext(), ix.hasNext());
+			assertEquals(jx.hasPrevious(), ix.hasPrevious());
+		}
 		try {
 			ix.previous();
 		} catch (Throwable e) {
 			assertEquals(NoSuchElementException.class, e.getClass());
 		}
+		try {
+			jx.previous();
+		} catch (Throwable e) {
+			assertEquals(NoSuchElementException.class, e.getClass());
+		}
+		assertEquals("z", ix.next());
+		assertEquals("z", jx.next());
 		ix.remove();
+		jx.remove();
+		assertEquals(jx.nextIndex(), ix.nextIndex());
+		assertEquals(jx.previousIndex(), ix.previousIndex());
+		assertEquals(jx.hasNext(), ix.hasNext());
+		assertEquals(jx.hasPrevious(), ix.hasPrevious());
 		assertEquals(array.length, list.size());
-		while (ix.hasNext()) {
-			assertEquals(array[j], ix.next());
-			j++;
+		
+		while(ix.hasNext() && jx.hasNext()) {
+			assertEquals(jx.next(), ix.next());
+			assertEquals(jx.nextIndex(), ix.nextIndex());
+			assertEquals(jx.previousIndex(), ix.previousIndex());
+			assertEquals(jx.hasNext(), ix.hasNext());
+			assertEquals(jx.hasPrevious(), ix.hasPrevious());
 		}
 	}
 
