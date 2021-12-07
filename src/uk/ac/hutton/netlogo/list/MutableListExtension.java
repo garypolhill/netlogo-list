@@ -56,6 +56,7 @@ public class MutableListExtension extends DefaultClassManager {
 		primManager.addPrimitive("median", new ListReporter(ListReporter.Name.MEDIAN));
 		primManager.addPrimitive("member?", new ListReporter(ListReporter.Name.MEMBER));
 		primManager.addPrimitive("member-any?", new ListReporter(ListReporter.Name.MEMBER_ANY));
+		primManager.addPrimitive("min", new ListReporter(ListReporter.Name.MIN));
 		primManager.addPrimitive("modes", new ListReporter(ListReporter.Name.MODES));
 		primManager.addPrimitive("overwrite", new IndexCommand(IndexCommand.Name.OVERWRITE));
 		primManager.addPrimitive("quartiles", new ListReporter(ListReporter.Name.QUARTILES));

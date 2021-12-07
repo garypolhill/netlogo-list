@@ -351,9 +351,6 @@ public class MutableList implements List<Object>, Cloneable {
 	 */
 	@Override
 	public boolean contains(Object o) {
-		if (tail == null) {
-			return false;
-		}
 		MutableList i = tail;
 
 		while (i != null) {

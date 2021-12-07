@@ -490,9 +490,9 @@ public class NetLogoMutableList implements ExtensionObject, Iterable<Object> {
 		LogoList logo = LogoList.Empty();
 		for (Object item : list) {
 			if (item instanceof NetLogoMutableList) {
-				logo.lput(((NetLogoMutableList) item).asLogoListDeeply());
+				logo = logo.lput(((NetLogoMutableList) item).asLogoListDeeply());
 			} else {
-				logo.lput(item);
+				logo = logo.lput(item);
 			}
 		}
 		return logo;

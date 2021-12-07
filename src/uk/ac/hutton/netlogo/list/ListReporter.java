@@ -180,7 +180,7 @@ public class ListReporter implements Reporter {
 					throw new ExtensionException("range command start \"" + start + "\", stop \"" + stop
 							+ ", increment \"" + inc + "\" leads to non-finite list element");
 				}
-				lst.add(new Double(i));
+				lst.add(Double.valueOf(i));
 			}
 			return new NetLogoMutableList(lst);
 		} else if (cmd == Name.REDUCE) {
@@ -233,23 +233,23 @@ public class ListReporter implements Reporter {
 			case IS_EMPTY:
 				return list.size() == 0;
 			case LENGTH:
-				return new Double((double) list.size());
+				return Double.valueOf((double) list.size());
 			case MAX:
-				return new Double(getStats(list)[1]);
+				return Double.valueOf(getStats(list)[1]);
 			case MEAN:
-				return new Double(getStats(list)[3]);
+				return Double.valueOf(getStats(list)[3]);
 			case MEDIAN:
-				return new Double(quartiles(list)[1]);
+				return Double.valueOf(quartiles(list)[1]);
 			case MEMBER:
 				if (args.length == 2) {
-					return new Boolean(list.member(args[1]));
+					return Boolean.valueOf(list.member(args[1].get()));
 				} else {
-					return new Boolean(list.memberAll(ListCommand.getArguments(args)));
+					return Boolean.valueOf(list.memberAll(ListCommand.getArguments(args)));
 				}
 			case MEMBER_ANY:
-				return new Boolean(list.memberAny(ListCommand.getArguments(args)));
+				return Boolean.valueOf(list.memberAny(ListCommand.getArguments(args)));
 			case MIN:
-				return new Double(getStats(list)[0]);
+				return Double.valueOf(getStats(list)[0]);
 			case MODES:
 				return modes(list);
 			case POP:
@@ -259,7 +259,7 @@ public class ListReporter implements Reporter {
 			case SHIFT:
 				return list.shift();
 			case SUM:
-				return new Double(getStats(list)[2]);
+				return Double.valueOf(getStats(list)[2]);
 			case FIRST:
 				return list.first();
 			case SECOND:
@@ -334,10 +334,10 @@ public class ListReporter implements Reporter {
 					first = false;
 				} else {
 					sum += (Double) o;
-					n += 1.0;
 					min = ((Double) o < min) ? (Double) o : min;
 					max = ((Double) o > max) ? (Double) o : max;
 				}
+				n += 1.0;
 			}
 		}
 		return new double[] { min, max, sum, sum / n };
@@ -356,25 +356,25 @@ public class ListReporter implements Reporter {
 	 *         quartiles will be <code>Double.NaN</code> if the list has fewer than
 	 *         two elements
 	 */
-	private double[] quartiles(NetLogoMutableList list) {
+	private Double[] quartiles(NetLogoMutableList list) {
 		Double[] numbers = getNumbers(list);
 
 		// Handle quick cases first with no sorted list
 		if (numbers.length == 0) {
-			return new double[] { Double.NaN, Double.NaN, Double.NaN };
+			return new Double[] { Double.NaN, Double.NaN, Double.NaN };
 		} else if (numbers.length == 1) {
-			return new double[] { Double.NaN, numbers[0], Double.NaN };
+			return new Double[] { Double.NaN, numbers[0], Double.NaN };
 		} else if (numbers.length == 2) {
-			return new double[] { numbers[0], (numbers[0] + numbers[1]) / 2.0, numbers[1] };
+			return new Double[] { numbers[0], (numbers[0] + numbers[1]) / 2.0, numbers[1] };
 		}
 
 		Arrays.sort(numbers);
 
 		// Handle quick cases with a sorted list
 		if (numbers.length == 3) {
-			return new double[] { (numbers[0] + numbers[1]) / 2.0, numbers[1], (numbers[1] + numbers[2]) / 2.0 };
+			return new Double[] { (numbers[0] + numbers[1]) / 2.0, numbers[1], (numbers[1] + numbers[2]) / 2.0 };
 		} else if (numbers.length == 4) {
-			return new double[] { (numbers[0] + numbers[1]) / 2.0, (numbers[1] + numbers[2]) / 2.0,
+			return new Double[] { (numbers[0] + numbers[1]) / 2.0, (numbers[1] + numbers[2]) / 2.0,
 					(numbers[2] + numbers[3]) / 2.0 };
 		}
 
@@ -406,7 +406,7 @@ public class ListReporter implements Reporter {
 			q3lo = q3hi;
 		}
 
-		return new double[] { (numbers[q1lo] + numbers[q1hi]) / 2.0, (numbers[q2lo] + numbers[q2hi]) / 2.0,
+		return new Double[] { (numbers[q1lo] + numbers[q1hi]) / 2.0, (numbers[q2lo] + numbers[q2hi]) / 2.0,
 				(numbers[q3lo] + numbers[q3hi]) / 2.0 };
 	}
 

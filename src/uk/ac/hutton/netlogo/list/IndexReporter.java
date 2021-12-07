@@ -67,9 +67,9 @@ public class IndexReporter implements Reporter {
 			NetLogoMutableListIndex ix = NetLogoMutableListIndex.asNetLogoMutableListIndex(args[0]);
 			switch (cmd) {
 			case HASLEFT:
-				return new Boolean(ix.hasPrevious());
+				return Boolean.valueOf(ix.hasPrevious());
 			case HASRIGHT:
-				return new Boolean(ix.hasNext());
+				return Boolean.valueOf(ix.hasNext());
 			case LEFT:
 				try {
 					return ix.previous();

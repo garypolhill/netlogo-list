@@ -303,10 +303,32 @@ to test-information
       assert-false "deep-member" ls:deep-member? recursive-list i
     ]
   ]
+
+  assert-true "member" ls:member? stack "lorry"
+  assert-false "member" ls:member? stack "car"
+  assert-true "member*" (ls:member? stack "red" "lorry" "yellow")
+  assert-false "member*" (ls:member? stack "red" "lorry" "orange")
+  assert-true "member-any" (ls:member-any? stack "car" "orange" "red")
+  assert-false "member-any" (ls:member-any? stack "car" "orange" "blue")
+
+  let test (sentence n-values 100 [i -> i + 10] n-values 50 [i -> i + 20] n-values 20 [i -> i + 10] n-values 10 [i -> i + 5])
+  print (word "z = c(" (reduce [[p i] -> (word p ", " i)] test) ")")
+  set stack ls:from-list test
+  let hist ls:histogram stack 10 50 10
+  assert-list-equals "hist" [ 25 30 20 20 ] hist
+  assert-equals "max" max test ls:max stack
+  assert-equals "min" min test ls:min stack
+  assert-equals "median" median test ls:median stack
+  assert-equals "mean" mean test ls:mean stack
+  assert-list-equals "modes" modes test ls:modes stack
+  assert-equals "sum" sum test ls:sum stack
+  assert-equals "quartile" median test item 1 ls:quartiles stack
+  assert-list-equals "quartile" [ 24.5 44.5 67.0 ] ls:quartiles stack ; from fivenum() in R
 end
 
 to test-conversion
   ; ls:as-list already extensively tested
+  assert-list-equals "as-list-deeply" [ [4 5 6] 1 [7 8 9] 2 [10 [11 12 13] 14] 3 ] ls:as-list-deeply recursive-list
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -763,6 +785,14 @@ NetLogo 6.2.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="test" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup
+go</setup>
+    <timeLimit steps="6"/>
+    <metric>n-fails</metric>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default

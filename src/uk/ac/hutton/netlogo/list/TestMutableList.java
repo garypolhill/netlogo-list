@@ -194,21 +194,24 @@ public class TestMutableList {
 	 */
 	@Test
 	public void testContains() {
-		Object[] array = new Object[] { new Integer(3), new Double(Math.PI), new String("Hello World"),
-				new Byte[] { 0, 1, 2 }, new Character('a') };
+		Object[] array = new Object[] { Integer.valueOf(3), Double.valueOf(Math.PI), new String("Hello World"),
+				new Byte[] { 0, 1, 2 }, Character.valueOf('a') };
 		MutableList list = new MutableList(Arrays.asList(array));
 		for (Object o : array) {
 			assertTrue(o.toString(), list.contains(o));
 		}
-		assertTrue("new 3", list.contains(new Integer(3)));
-		assertTrue("new PI", list.contains(new Double(Math.PI)));
+		for (Object o : list) {
+			assertTrue("self " + o.toString(), list.contains(o));
+		}
+		assertTrue("new 3", list.contains(Integer.valueOf(3)));
+		assertTrue("new PI", list.contains(Double.valueOf(Math.PI)));
 		assertTrue("new Hello World", list.contains(new String("Hello World")));
 		// This fails presumably because array equality isn't deep
 		// assertTrue("new Byte array", list.contains(new Byte[] { 0, 1, 2 }));
 		assertTrue("const 3", list.contains(3));
 		assertTrue("const PI", list.contains(Math.PI));
 		assertTrue("const Hello World", list.contains("Hello World"));
-		assertFalse("-3456L", list.contains(new Long(-3456L)));
+		assertFalse("-3456L", list.contains(Long.valueOf(-3456L)));
 		assertFalse("Hello There!", list.contains("Hello There!"));
 		assertFalse("Integer array", list.contains(new Integer[] { 1, 2, 3 }));
 	}
