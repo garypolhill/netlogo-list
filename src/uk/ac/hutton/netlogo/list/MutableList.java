@@ -890,8 +890,7 @@ public class MutableList implements List<Object>, Cloneable {
 			i.prev = null;
 			if (i.head instanceof MutableList) {
 				((MutableList) (i.head)).clear();
-			}
-			else if (head instanceof NetLogoMutableList) {
+			} else if (head instanceof NetLogoMutableList) {
 				((NetLogoMutableList) (i.head)).clear();
 			}
 			i.head = null;
@@ -908,8 +907,7 @@ public class MutableList implements List<Object>, Cloneable {
 	private void shallowClear() {
 		if (head instanceof MutableList) {
 			((MutableList) (head)).clear();
-		}
-		else if (head instanceof NetLogoMutableList) {
+		} else if (head instanceof NetLogoMutableList) {
 			((NetLogoMutableList) (head)).clear();
 		}
 		head = null;
@@ -929,8 +927,7 @@ public class MutableList implements List<Object>, Cloneable {
 			Object newObj = i.head;
 			if (i.head instanceof MutableList) {
 				newObj = ((MutableList) (i.head)).clone();
-			}
-			else if (i.head instanceof NetLogoMutableList) {
+			} else if (i.head instanceof NetLogoMutableList) {
 				newObj = ((NetLogoMutableList) (i.head)).copy();
 			}
 			next = new MutableList(newObj, next);
@@ -1384,8 +1381,7 @@ public class MutableList implements List<Object>, Cloneable {
 		@Override
 		public Object previous() {
 			if (i.head == null) {
-				throw new NoSuchElementException(
-						"Reached beginning of MutableList (at [" + cx() + "])");
+				throw new NoSuchElementException("Reached beginning of MutableList (at [" + cx() + "])");
 			} else {
 				MutableList j = i;
 				i = i.prev;
@@ -1490,8 +1486,9 @@ public class MutableList implements List<Object>, Cloneable {
 				popped = true;
 			}
 			i = popped ? i : i.tail;
-			while (i.head instanceof MutableList) {
-				MutableList ihead = (MutableList) (i.head);
+			while (i.head instanceof MutableList || i.head instanceof NetLogoMutableList) {
+				MutableList ihead = (i.head instanceof MutableList) ? (MutableList) (i.head)
+						: ((NetLogoMutableList) i.head).getList();
 
 				if (ihead.isEmpty()) {
 					if (i.tail == null) {

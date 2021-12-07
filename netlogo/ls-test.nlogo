@@ -88,6 +88,14 @@ end
 to go
   test-list-construction
   step
+  test-access
+  step
+  test-modification
+  step
+  test-information
+  step
+  test-conversion
+  step
 
   if n-fails = 0 [
     ask patches [
@@ -163,6 +171,142 @@ to test-list-construction
   ls:insert cpix ls:from-list (list 10 (ls:from-list [ 11 12 13 ]) 14 )
   assert-equals "insert 2" 3 ls:right cpix
 
+end
+
+to test-access
+  let i 0
+  let nl-range-list [0 1 2 3 4 5 16 7 8 9 10]
+  ls:foreach range-list [ j ->
+    assert-equals "foreach" (item i nl-range-list) j
+    set i i + 1
+  ]
+  assert-equals "foreach" 11 i
+  assert-equals "first" 0 ls:first range-list
+  assert-equals "second" 1 ls:second range-list
+  assert-equals "third" 2 ls:third range-list
+  assert-equals "fourth" 3 ls:fourth range-list
+  assert-equals "fifth" 4 ls:fifth range-list
+  assert-equals "sixth" 5 ls:sixth range-list
+  assert-equals "seventh" 16 ls:seventh range-list
+  assert-equals "eighth" 7 ls:eighth range-list
+  assert-equals "ninth" 8 ls:ninth range-list
+  assert-equals "tenth" 9 ls:tenth range-list
+
+  ; ls:left and ls:right tested elsewhere
+
+  let nl-flat-list [ 4 5 6 1 7 8 9 2 10 11 12 13 14 3 ]
+  set i 0
+  ls:foreach-depth-first recursive-list [ j ->
+    assert-equals "depth" (item i nl-flat-list) j
+    set i i + 1
+  ]
+end
+
+to test-modification
+  ls:cat range-list copy-of-a-list
+  assert-true "cat" ls:empty? copy-of-a-list
+  assert-list-equals "cat" [0 1 2 3 4 5 16 7 8 9 10 0 1 2 3 4 5 6 7 8 9 10] ls:as-list range-list
+  ls:clear range-list
+  assert-true "clear" ls:empty? range-list
+  set range-list ls:range 0 10 1
+  set copy-of-a-list ls:range 11 20 1
+  (ls:cat range-list copy-of-a-list ls:range 21 30 1)
+  assert-true "cat" ls:empty? copy-of-a-list
+  assert-list-equals "cat" n-values 31 [i -> i] ls:as-list range-list
+  ls:filter [ i -> i mod 2 = 0 ] range-list
+  assert-list-equals "filter" n-values 16 [i -> i * 2] ls:as-list range-list
+  let rix ls:cursor range-list
+  while [ (ls:right rix) != 8 ] [ ]
+  assert-equals "left" 8 ls:left rix
+  ls:delete rix
+  assert-equals "right" 10 ls:right rix
+  assert-equals "left" 10 ls:left rix
+  ls:insert rix 8
+  assert-list-equals "delete/insert" n-values 16 [i -> i * 2] ls:as-list range-list
+  assert-true "is-cursor?" ls:is-cursor? rix
+  assert-false "is-cursor?" ls:is-cursor? range-list
+  assert-true "is-list?" ls:is-list? range-list
+  assert-false "is-list?" ls:is-list? rix
+  let stack ls:make
+  ls:fpush stack "a"
+  assert-list-equals "fpush" ["a"] ls:as-list stack
+  (ls:fpush stack "a" "b" "c" "d")
+  assert-list-equals "fpush*" ["a" "b" "c" "d" "a"] ls:as-list stack
+  ls:fpush-all stack ["a" "b" "c" "d" "e"]
+  assert-list-equals "fpush-all" ["a" "b" "c" "d" "e" "a" "b" "c" "d" "a"] ls:as-list stack
+  assert-equals "fpop" "a" ls:fpop stack
+  assert-list-equals "fpop" ["b" "c" "d" "e" "a" "b" "c" "d" "a"] ls:as-list stack
+  ls:lpush stack "z"
+  assert-list-equals "lpush" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z"] ls:as-list stack
+  (ls:lpush stack "p" "q" "r")
+  assert-list-equals "lpush*" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q" "r"] ls:as-list stack
+  assert-equals "lpop" "r" ls:lpop stack
+  assert-list-equals "lpop" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q"] ls:as-list stack
+  ls:lpush-all stack ["p" "q" "r" "s" "t"]
+  assert-list-equals "lpush-all" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:remove-once stack "e"
+  assert-list-equals "remove-once" ["b" "c" "d" "a" "b" "c" "d" "a" "z" "p" "q" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:remove stack "d"
+  assert-list-equals "remove" ["b" "c" "a" "b" "c" "a" "z" "p" "q" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:remove stack "z"
+  assert-list-equals "remove" ["b" "c" "a" "b" "c" "a" "p" "q" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:remove-duplicates stack
+  assert-list-equals "remove-dup" ["b" "c" "a" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:reverse stack
+  assert-list-equals "reverse" ["t" "s" "r" "q" "p" "a" "c" "b"] ls:as-list stack
+  ls:shuffle stack
+  assert-true "shuffle" (ls:member? stack "t" "s" "r" "q" "p" "a" "c" "b")
+  assert-equals "shuffle" 8 ls:length stack
+  ls:sort stack [ [a b] -> ifelse-value (a < b) [-1] [ifelse-value (a > b) [1] [0] ] ]
+  assert-list-equals "sort" ["a" "b" "c" "p" "q" "r" "s" "t"] ls:as-list stack
+  (ls:fpush stack "u" "v")
+  assert-list-equals "fpush" ["u" "v" "a" "b" "c" "p" "q" "r" "s" "t"] ls:as-list stack
+  ls:set-first stack 1
+  ls:set-second stack 2
+  ls:set-third stack 3
+  ls:set-fourth stack 4
+  ls:set-fifth stack 5
+  ls:set-sixth stack 6
+  ls:set-seventh stack 7
+  ls:set-eighth stack 8
+  ls:set-ninth stack 9
+  ls:set-tenth stack 10
+  assert-list-equals "set-nth" [1 2 3 4 5 6 7 8 9 10] ls:as-list stack
+  (ls:keep stack 1 2 3 4 5)
+  assert-list-equals "keep*" [1 2 3 4 5] ls:as-list stack
+  ls:keep stack 1
+  assert-list-equals "keep" [1] ls:as-list stack
+  ls:clear stack
+  assert-true "clear" ls:empty? stack
+end
+
+to test-information
+  let stack ls:from-list ["red" "lorry" "yellow" "lorry" "red" "lorry" "yellow" "lorry"]
+  let cts ls:counts stack
+  foreach cts [ pair ->
+    (ifelse item 0 pair = "red" [
+      assert-equals "counts" 2 item 1 pair
+    ] item 0 pair = "lorry" [
+      assert-equals "counts" 4 item 1 pair
+    ] item 0 pair = "yellow" [
+      assert-equals "counts" 2 item 1 pair
+    ] [
+      fail
+    ])
+  ]
+  assert-true "deep-member" ls:deep-member? stack "lorry"
+  assert-false "deep-member" ls:deep-member? stack "car"
+  foreach n-values 20 [i -> i - 2] [ i ->
+    ifelse i >= 1 and i <= 14 [
+      assert-true "deep-member" ls:deep-member? recursive-list i
+    ] [
+      assert-false "deep-member" ls:deep-member? recursive-list i
+    ]
+  ]
+end
+
+to test-conversion
+  ; ls:as-list already extensively tested
 end
 @#$#@#$#@
 GRAPHICS-WINDOW

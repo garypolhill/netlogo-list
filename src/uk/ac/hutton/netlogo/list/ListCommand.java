@@ -61,7 +61,7 @@ public class ListCommand implements Command {
 		case CLEAR:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType() });
 		case FILTER:
-			return SyntaxJ.commandSyntax(new int[] { Syntax.BooleanBlockType(), Syntax.WildcardType() });
+			return SyntaxJ.commandSyntax(new int[] { Syntax.ReporterType(), Syntax.WildcardType() });
 		case FOREACH:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.CommandType() });
 		case FOREACH_DEPTH_FIRST:
@@ -83,8 +83,10 @@ public class ListCommand implements Command {
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.WildcardType() });
 		case REVERSE:
 			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType() });
+		case SHUFFLE:
+			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType() });
 		case SORT:
-			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.NumberBlockType() });
+			return SyntaxJ.commandSyntax(new int[] { Syntax.WildcardType(), Syntax.ReporterType() });
 		case UNSHIFT:
 			return SyntaxJ.commandSyntax(
 					new int[] { Syntax.WildcardType(), Syntax.WildcardType() | Syntax.RepeatableType() }, 2);
@@ -119,7 +121,7 @@ public class ListCommand implements Command {
 			switch (cmd) {
 			case CAT:
 				NetLogoMutableList prev = NetLogoMutableList.asNetLogoMutableList(args[args.length - 1]);
-				for (int i = args.length - 2; i >= 1; i++) {
+				for (int i = args.length - 2; i >= 1; i--) {
 					NetLogoMutableList other = NetLogoMutableList.asNetLogoMutableList(args[i]);
 					other.cat(prev);
 					prev = other;
@@ -128,6 +130,7 @@ public class ListCommand implements Command {
 				break;
 			case CLEAR:
 				list.clear();
+				break;
 			case FOREACH:
 				foreach(list, args[1].getCommand(), context);
 				break;
@@ -136,6 +139,7 @@ public class ListCommand implements Command {
 				break;
 			case KEEP:
 				list.retainAll(getArguments(args));
+				break;
 			case PUSH:
 				if (args.length == 2) {
 					list.push(args[1].get());
@@ -170,6 +174,7 @@ public class ListCommand implements Command {
 				break;
 			case SHUFFLE:
 				list.sort(new ShufflingComparator(list, context));
+				break;
 			case SORT:
 				try {
 					list.sort(new ObjectComparator(args[1].getReporter(), context));
@@ -181,6 +186,7 @@ public class ListCommand implements Command {
 				for (int i = args.length - 1; i >= 1; i--) {
 					list.unshift(args[i].get());
 				}
+				break;
 			case UNSHIFT_ALL:
 				obj = args[1].get();
 				if (obj instanceof LogoList) {
@@ -241,7 +247,7 @@ public class ListCommand implements Command {
 	 */
 	protected static List<Object> getArguments(Argument[] args) throws ExtensionException {
 		List<Object> argsList = new LinkedList<Object>();
-		for (int i = 1; i <= args.length - i; i++) {
+		for (int i = 1; i < args.length; i++) {
 			argsList.add(args[i].get());
 		}
 		return argsList;
@@ -267,12 +273,18 @@ public class ListCommand implements Command {
 	 * @param cmd
 	 * @param context
 	 */
-	private void filter(NetLogoMutableList list, AnonymousReporter cmd, Context context) {
+	private void filter(NetLogoMutableList list, AnonymousReporter cmd, Context context) throws ExtensionException {
 		ListIterator<Object> ix = list.getListIterator();
 
 		while (ix.hasNext()) {
-			if (!cmd.report(context, new Object[] { ix.next() }).equals(Boolean.TRUE)) {
-				ix.remove();
+			Object result = cmd.report(context, new Object[] { ix.next() });
+			if (result instanceof Boolean) {
+				if (!result.equals(Boolean.TRUE)) {
+					ix.remove();
+				}
+			}
+			else {
+				throw new ExtensionException("Non Boolean result \"" + result.toString() + "\" from filter reporter");
 			}
 		}
 	}

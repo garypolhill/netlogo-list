@@ -61,10 +61,10 @@ public class IndexReporter implements Reporter {
 	 */
 	@Override
 	public Object report(Argument[] args, Context context) throws ExtensionException {
-		NetLogoMutableListIndex ix = NetLogoMutableListIndex.asNetLogoMutableListIndex(args[0]);
 		if (cmd == Name.IS_INDEX) {
 			return (args[0].get() instanceof NetLogoMutableListIndex);
 		} else {
+			NetLogoMutableListIndex ix = NetLogoMutableListIndex.asNetLogoMutableListIndex(args[0]);
 			switch (cmd) {
 			case HASLEFT:
 				return new Boolean(ix.hasPrevious());
