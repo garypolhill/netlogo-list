@@ -14,7 +14,7 @@ import org.nlogo.api.PrimitiveManager;
  * @author gary
  */
 public class MutableListExtension extends DefaultClassManager {
-	public static final String EXTENSION_NAME = "ls";
+	public static final String EXTENSION_NAME = "lt";
 
 	@Override
 	public void load(PrimitiveManager primManager) throws ExtensionException {

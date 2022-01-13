@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Extension-Name: ls
+Extension-Name: lt
 Class-Manager: uk.ac.hutton.netlogo.list.MutableListExtension
 NetLogo-Extension-API-Version: 6.1
