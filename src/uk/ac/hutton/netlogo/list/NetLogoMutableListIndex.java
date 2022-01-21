@@ -16,7 +16,7 @@ import org.nlogo.core.ExtensionObject;
  * 
  * @author gary
  */
-public class NetLogoMutableListIndex implements ExtensionObject {
+public class NetLogoMutableListIndex implements ExtensionObject, ListIterator<Object> {
 	private ListIterator<Object> ix;
 	private final NetLogoMutableList list;
 	public static final String DATA_TYPE_NAME = "cursor";
@@ -36,6 +36,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	/**
 	 * @return the next Object in the list, advancing the cursor one to the right
 	 */
+	@Override
 	public Object next() {
 		return ix.next();
 	}
@@ -44,6 +45,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	 * @return the previous Object in the list, advancing the cursor one to the
 	 *         right
 	 */
+	@Override
 	public Object previous() {
 		return ix.previous();
 	}
@@ -51,6 +53,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	/**
 	 * @return <code>true</code> iff the next call to next() will not fail
 	 */
+	@Override
 	public boolean hasNext() {
 		return ix.hasNext();
 	}
@@ -58,6 +61,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	/**
 	 * @return <code>true</code> iff the next call to previous() will not fail
 	 */
+	@Override
 	public boolean hasPrevious() {
 		return ix.hasPrevious();
 	}
@@ -67,6 +71,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	 * 
 	 * @param obj the object to insert
 	 */
+	@Override
 	public void add(Object obj) {
 		list.incSize();
 		ix.add(obj);
@@ -75,6 +80,7 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 	/**
 	 * Remove the object at the cursor
 	 */
+	@Override
 	public void remove() {
 		list.decSize();
 		ix.remove();
@@ -155,6 +161,16 @@ public class NetLogoMutableListIndex implements ExtensionObject {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int nextIndex() {
+		return ix.nextIndex();
+	}
+
+	@Override
+	public int previousIndex() {
+		return ix.previousIndex();
 	}
 
 }

@@ -71,6 +71,7 @@ public class NetLogoMutableList implements ExtensionObject, Iterable<Object> {
 	protected NetLogoMutableList(Collection<? extends Object> c) {
 		this();
 		list.addAll(c);
+		size = c.size();
 	}
 
 	/**
@@ -559,7 +560,7 @@ public class NetLogoMutableList implements ExtensionObject, Iterable<Object> {
 	 * @return
 	 */
 	protected ListIterator<Object> getListIterator() {
-		return list.listIterator();
+		return new NetLogoMutableListIndex(this);
 	}
 	
 	/**

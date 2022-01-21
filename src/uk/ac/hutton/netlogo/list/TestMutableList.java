@@ -883,5 +883,38 @@ public class TestMutableList {
 	public void testEqualsObject() {
 		// tested by testClone()
 	}
+	
+	@Test
+	public void testCat() {
+		Integer[] arr1 = new Integer[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+		Integer[] arr2 = new Integer[] { 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+		MutableList list1 = new MutableList(Arrays.asList(arr1));
+		MutableList list2 = new MutableList(Arrays.asList(arr2));
+		assertEquals(arr1.length, list1.size());
+		assertEquals(arr2.length, list2.size());
+		list1.cat(list2);
+		assertEquals(arr1.length + arr2.length, list1.size());
+		assertEquals(0, list2.size());
+		Integer i = new Integer(0);
+		for(Object o: list1) {
+			assertEquals(i, (Integer)o);
+			i = i + 1;
+		}
+		
+		NetLogoMutableList netl1 = new NetLogoMutableList(Arrays.asList(arr1));
+		NetLogoMutableList netl2 = new NetLogoMutableList(Arrays.asList(arr2));
+		assertEquals(arr1.length, netl1.size());
+		assertEquals(arr2.length, netl2.size());
+		netl1.cat(netl2);
+		
+		i = new Integer(0);
+		for(Object o: netl1) {
+			assertEquals(i, (Integer)o);
+			i = i + 1;
+		}
+		assertEquals(0, netl2.size());
+		assertEquals(arr1.length + arr2.length, netl1.size());
+
+	}
 
 }

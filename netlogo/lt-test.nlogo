@@ -116,6 +116,7 @@ end
 to test-list-construction
   set empty-list lt:make
   assert-true "empty" lt:empty? empty-list
+  assert-equals "empty-length" 0 lt:length empty-list
 
   set list-from-agentset lt:from-agentset patches
   assert-equals "patches" (count patches) (lt:length list-from-agentset)
@@ -133,15 +134,19 @@ to test-list-construction
   let test-list [ "one" "two" "three" "four" "five" ]
   set list-from-logo-list lt:from-list test-list
   assert-list-equals "from-list" test-list lt:as-list list-from-logo-list
+  assert-equals "from-list-length" length test-list lt:length list-from-logo-list
 
   set range-list lt:range 0 10 1
   assert-list-equals "range" [0 1 2 3 4 5 6 7 8 9 10] lt:as-list range-list
+  assert-equals "range-length" 11 lt:length range-list
 
   set list-from-map lt:map [ x -> x + 10 ] range-list
   assert-list-equals "map" [10 11 12 13 14 15 16 17 18 19 20] lt:as-list list-from-map
+  assert-equals "map-length" 11 lt:length list-from-map
 
   set list-from-multi-arg-map (lt:map [ [ x y ] -> x + y ] range-list list-from-map)
   assert-list-equals "map*" [10 12 14 16 18 20 22 24 26 28 30] lt:as-list list-from-multi-arg-map
+  assert-equals "map*-length" 11 lt:length list-from-multi-arg-map
 
   set cursor lt:cursor range-list
   assert-true "has-right" lt:has-right? cursor
@@ -158,6 +163,7 @@ to test-list-construction
   assert-equals "right 6" 6 lt:right cursor
   set copy-of-a-list lt:copy range-list
   assert-list-equals "copy" lt:as-list range-list lt:as-list copy-of-a-list
+  assert-equals "copy-length" lt:length copy-of-a-list lt:length range-list
   lt:overwrite cursor 16
   assert-equals "copy 6" 6 lt:seventh copy-of-a-list
   assert-equals "overwrite 6" 16 lt:seventh range-list
@@ -205,24 +211,34 @@ end
 to test-modification
   lt:cat range-list copy-of-a-list
   assert-true "cat" lt:empty? copy-of-a-list
+  assert-equals "cat-length" 0 lt:length copy-of-a-list
   assert-list-equals "cat" [0 1 2 3 4 5 16 7 8 9 10 0 1 2 3 4 5 6 7 8 9 10] lt:as-list range-list
+  assert-equals "cat-length" 22 lt:length range-list
   lt:clear range-list
   assert-true "clear" lt:empty? range-list
+  assert-equals "clear-length" 0 lt:length range-list
   set range-list lt:range 0 10 1
   set copy-of-a-list lt:range 11 20 1
   (lt:cat range-list copy-of-a-list lt:range 21 30 1)
   assert-true "cat" lt:empty? copy-of-a-list
+  assert-equals "cat-length" 0 lt:length copy-of-a-list
   assert-list-equals "cat" n-values 31 [i -> i] lt:as-list range-list
+  assert-equals "cat-length" 31 lt:length range-list
+  set range-list lt:from-list n-values 31 [i -> i]
   lt:filter [ i -> i mod 2 = 0 ] range-list
   assert-list-equals "filter" n-values 16 [i -> i * 2] lt:as-list range-list
+  assert-equals "filter-length" 16 lt:length range-list
+  set range-list lt:from-list n-values 16 [i -> i * 2]
   let rix lt:cursor range-list
   while [ (lt:right rix) != 8 ] [ ]
   assert-equals "left" 8 lt:left rix
   lt:delete rix
+  assert-equals "delete-length" 15 lt:length range-list
   assert-equals "right" 10 lt:right rix
   assert-equals "left" 10 lt:left rix
   lt:insert rix 8
   assert-list-equals "delete/insert" n-values 16 [i -> i * 2] lt:as-list range-list
+  assert-equals "insert-length" 16 lt:length range-list
   assert-true "is-cursor?" lt:is-cursor? rix
   assert-false "is-cursor?" lt:is-cursor? range-list
   assert-true "is-list?" lt:is-list? range-list
@@ -230,37 +246,52 @@ to test-modification
   let stack lt:make
   lt:fpush stack "a"
   assert-list-equals "fpush" ["a"] lt:as-list stack
+  assert-equals "fpush-length" 1 lt:length stack
   (lt:fpush stack "a" "b" "c" "d")
   assert-list-equals "fpush*" ["a" "b" "c" "d" "a"] lt:as-list stack
+  assert-equals "fpush*-length" 5 lt:length stack
   lt:fpush-all stack ["a" "b" "c" "d" "e"]
   assert-list-equals "fpush-all" ["a" "b" "c" "d" "e" "a" "b" "c" "d" "a"] lt:as-list stack
+  assert-equals "fpush-all-length" 10 lt:length stack
   assert-equals "fpop" "a" lt:fpop stack
   assert-list-equals "fpop" ["b" "c" "d" "e" "a" "b" "c" "d" "a"] lt:as-list stack
+  assert-equals "fpop-length" 9 lt:length stack
   lt:lpush stack "z"
   assert-list-equals "lpush" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z"] lt:as-list stack
+  assert-equals "lpush-length" 10 lt:length stack
   (lt:lpush stack "p" "q" "r")
   assert-list-equals "lpush*" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q" "r"] lt:as-list stack
+  assert-equals "lpush*-length" 13 lt:length stack
   assert-equals "lpop" "r" lt:lpop stack
   assert-list-equals "lpop" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q"] lt:as-list stack
+  assert-equals "lpop-length" 12 lt:length stack
   lt:lpush-all stack ["p" "q" "r" "s" "t"]
   assert-list-equals "lpush-all" ["b" "c" "d" "e" "a" "b" "c" "d" "a" "z" "p" "q" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "lpush-all-length" 17 lt:length stack
   lt:remove-once stack "e"
   assert-list-equals "remove-once" ["b" "c" "d" "a" "b" "c" "d" "a" "z" "p" "q" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "remove-once-length" 16 lt:length stack
   lt:remove stack "d"
   assert-list-equals "remove" ["b" "c" "a" "b" "c" "a" "z" "p" "q" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "remove-length" 14 lt:length stack
   lt:remove stack "z"
   assert-list-equals "remove" ["b" "c" "a" "b" "c" "a" "p" "q" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "remove-length" 13 lt:length stack
   lt:remove-duplicates stack
   assert-list-equals "remove-dup" ["b" "c" "a" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "remove-dup-length" 8 lt:length stack
   lt:reverse stack
   assert-list-equals "reverse" ["t" "s" "r" "q" "p" "a" "c" "b"] lt:as-list stack
+  assert-equals "reverse-length" 8 lt:length stack
   lt:shuffle stack
   assert-true "shuffle" (lt:member? stack "t" "s" "r" "q" "p" "a" "c" "b")
-  assert-equals "shuffle" 8 lt:length stack
+  assert-equals "shuffle-length" 8 lt:length stack
   lt:sort stack [ [a b] -> ifelse-value (a < b) [-1] [ifelse-value (a > b) [1] [0] ] ]
   assert-list-equals "sort" ["a" "b" "c" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "sort-length" 8 lt:length stack
   (lt:fpush stack "u" "v")
   assert-list-equals "fpush" ["u" "v" "a" "b" "c" "p" "q" "r" "s" "t"] lt:as-list stack
+  assert-equals "fpush*-length" 10 lt:length stack
   lt:set-first stack 1
   lt:set-second stack 2
   lt:set-third stack 3
@@ -274,10 +305,13 @@ to test-modification
   assert-list-equals "set-nth" [1 2 3 4 5 6 7 8 9 10] lt:as-list stack
   (lt:keep stack 1 2 3 4 5)
   assert-list-equals "keep*" [1 2 3 4 5] lt:as-list stack
+  assert-equals "keep*-length" 5 lt:length stack
   lt:keep stack 1
   assert-list-equals "keep" [1] lt:as-list stack
+  assert-equals "keep-length" 1 lt:length stack
   lt:clear stack
   assert-true "clear" lt:empty? stack
+  assert-equals "clear-length" 0 lt:length stack
 end
 
 to test-information
